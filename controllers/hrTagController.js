@@ -530,16 +530,51 @@ export const getDeployedCandidates = async (req, res) => {
   }
 };
 
-// @desc    Get rejected/dropped candidates (NEW for 3-card layout)
+// @desc    Get rejected/dropped candidates (FIXED with date filtering)
 // @route   GET /api/hr-tag/rejected-candidates
 // @access  Protected (HR Tag team only)
 export const getRejectedCandidates = async (req, res) => {
   try {
-    // Get candidates that have been processed by L&D (Selected, Rejected, Dropped)
-    const candidates = await Candidate.find({
+    // Extract query parameters
+    const {
+      search = '',
+      fromDate = '',
+      toDate = ''
+    } = req.query;
+
+    // Build base query
+    let query = {
       sentToLD: true,
-      ldStatus: { $in: [ 'Rejected', 'Dropped'] }
-    })
+      ldStatus: { $in: ['Rejected', 'Dropped'] }
+    };
+
+    // Add search functionality (if search term provided)
+    if (search) {
+      query.$or = [
+        { fullName: { $regex: search, $options: 'i' } },
+        { personalEmail: { $regex: search, $options: 'i' } },
+        { college: { $regex: search, $options: 'i' } },
+        { mobileNumber: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    // Add date filter based on L&D decision date (ldStatusUpdatedAt)
+    if (fromDate || toDate) {
+      query.ldStatusUpdatedAt = {};
+      
+      if (fromDate) {
+        // Start of the fromDate
+        query.ldStatusUpdatedAt.$gte = new Date(fromDate);
+      }
+      
+      if (toDate) {
+        // End of the toDate (23:59:59.999)
+        query.ldStatusUpdatedAt.$lte = new Date(new Date(toDate).setHours(23, 59, 59, 999));
+      }
+    }
+
+    // Get candidates that have been processed by L&D (Rejected, Dropped)
+    const candidates = await Candidate.find(query)
       .sort({ ldStatusUpdatedAt: -1 })
       .select('-__v');
 
@@ -552,7 +587,8 @@ export const getRejectedCandidates = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Failed to fetch L&D processed candidates'
+      message: 'Failed to fetch rejected/dropped candidates',
+      error: error.message
     });
   }
 };

@@ -7,7 +7,7 @@ import hrOpsRoutes from './hrOps.js';
 import adminRoutes from './admin.js';
 import ldRoutes from './ldRoutes.js';
 import deliveryRoutes from './delivery.js';
-import venkatRoutes from './venkat.js';
+import adminPanelRoutes from './adminpanel.js';
 import emailRoutes from './email.js';
 
 const router = express.Router();
@@ -42,7 +42,7 @@ router.use('/api/ld', ldRoutes);
 router.use('/api/delivery', deliveryRoutes);
 
 // Venkat routes
-router.use('/api/venkat', venkatRoutes);
+router.use('/api/venkat', adminPanelRoutes);
 
 // Email routes (Updated path)
 router.use('/api/email', emailRoutes);

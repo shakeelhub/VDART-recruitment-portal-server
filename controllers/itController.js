@@ -201,8 +201,6 @@ export const getDeployedCandidates = async (req, res) => {
 export const getRejectedCandidates = async (req, res) => {
   try {
     const { page = 1, limit = 10, search, fromDate, toDate } = req.query;
-    
-    console.log(`❌ [IT] Fetching rejected/dropped candidates by ${req.user.name}`);
 
     // Only rejected/dropped candidates from L&D
     const query = {

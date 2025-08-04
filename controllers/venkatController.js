@@ -4,8 +4,8 @@ import Employee from '../schema/Employee.js';
 
 // Hardcoded venkat credentials
 const VENKAT_CREDENTIALS = {
-  username: 'venkat@vdart.com',
-  password: 'venkat123'
+  username: process.env.ADMIN_USERNAME,
+  password: process.env.ADMIN_USERNAME
 };
 
 // Venkat login

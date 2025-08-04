@@ -6,7 +6,7 @@ import {
   addEmployee,
   toggleEmployeeStatus,
   deleteEmployee,
-  getDeliveryManagerCredentials
+  getDeliveryManagerCredentials,
 } from '../controllers/venkatController.js';
 
 const router = express.Router();
